@@ -10,18 +10,10 @@ contract MirosShop is ERC721URIStorage {
 // structur of Item
 
     struct item {
+        address owner;
         uint256 tokenId;
-        uint storeId;
         uint256 price;
-        address owner;
-    }
-// structure of store
-
-    struct store {
-        address owner;
         string name;
-        string profileImg;
-        string coverImg;
     }
 
     using Counters for Counters.Counter;
@@ -30,7 +22,7 @@ contract MirosShop is ERC721URIStorage {
     address owner;
     uint256 listenPrice = 0.01 ether;
     item[] public items;
-    mapping (address => uint256) n_sotre;
+    mapping (address => uint) sold;
 
     event ItemEvent(uint256 tokenId, uint256 price, address owner);
 
@@ -38,36 +30,23 @@ contract MirosShop is ERC721URIStorage {
         owner = msg.sender;
     }
 
-// create Store
-
-    function createStore(string memory _name, string memory _pimg, string memory _cimg) public{
-        require(n_store < 6, "max store");
-        store(
-            msg.sender,
-            _name,
-            _pimg,
-            _cimg,
-        );
-        n_store[msg.sender]++;
-    }
-
 // create Nft
-    function _creatNft(string memory _metadata, uint256  _price, uint256 _listenPrice) public payable {
+    function _creatNft(string memory _metadata, uint256  _price, string memory _name) public payable {
+        require(_price > 1, "price invalid");
         uint256 NewId = _tokenIds.current();
         _safeMint(msg.sender, NewId);
         _setTokenURI(NewId, _metadata);
-        _createItem(NewId, _price, _listenPrice);
+        _createItem(NewId, _price, _name);
         _tokenIds.increment();
         emit ItemEvent(NewId, _price, msg.sender);
     }
 
-    function _createItem (uint256  _tokenId, uint256 _price, uint256 _listenprice) internal {
-        require(_listenprice == listenPrice, "invalid price");
+    function _createItem (uint256  _tokenId, uint256 _price, string memory _name) internal {
         items[_tokenId] = item (
+          msg.sender,
           _tokenId,
-          storeId,
           _price,
-          msg.sender
+          _name
         );
     }
 
@@ -86,7 +65,8 @@ contract MirosShop is ERC721URIStorage {
 // Buy Nft
     function _buyNft(uint256 _tokenId, uint256 _price) public payable {
         require(_price == items[_tokenId].price, "invalid price");
-        _transfer(items[_tokenId].owner, msg.sender, _tokenId);
+        _transfer(ownerOf(_tokenId), msg.sender, _tokenId);
+        sold[items[_tokenId].owner]++;
         items[_tokenId].owner = msg.sender;
         emit ItemEvent(_tokenId, _price, msg.sender);
     }

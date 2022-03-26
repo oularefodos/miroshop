@@ -44,6 +44,7 @@ body {
 .link:hover {
   color: aqua;
 }
+
 .linkbtn {
   color: aliceblue;
   border: solid 1px aliceblue;
@@ -62,7 +63,6 @@ body {
   background-color: aliceblue;
   color: #05006b;
 }
-
 
 /* form */
 form {
@@ -98,4 +98,22 @@ form {
   color:  #b3b1d8;
   font-size: larger;
   border: 1px solid white;
+}
+
+@media screen and (max-width: 1000px) {
+  .search {
+    width: 400px;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .search {
+    width: 70%;
+  }
+  .submit {
+    width:20%
+  }
+  .nav h1 {
+    font-size: 50px;
+  }
 }
