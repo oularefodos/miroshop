@@ -32,7 +32,7 @@ contract MirosShop is ERC721URIStorage {
 
 // create Nft
     function _creatNft(string memory _metadata, uint256  _price, string memory _name) public payable {
-        require(_price > 1, "price invalid");
+        require(_price > 0.5, "price invalid");
         uint256 NewId = _tokenIds.current();
         _safeMint(msg.sender, NewId);
         _setTokenURI(NewId, _metadata);
